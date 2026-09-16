@@ -223,8 +223,14 @@ order by publication_year DESC;
 
 
 -- Which decade had the most books
-
-
+select 
+	(LEFT(publication_year::TEXT, 3) || '0')::INTEGER AS decade, -- keeps the first three digits, adds a 0 as a string, converts it back to an integer
+	count(*)
+from books_cleaning	
+where publication_year is not null
+group by LEFT(publication_year::TEXT, 3)
+order by decade DESC;
+	
 -- Reader Engagement
 -- Which books have the most reviews
 select
