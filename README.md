@@ -28,7 +28,7 @@ This project demonstrates an end-to-end data analytics worlfow including data cl
 **Fantasy Market**
 * What share of the fiction market is fantasy?
 * How has fantasy publishing grown over time?
-* Which fantasy authors ND BOOKS GENERte the strongest reader engagement?
+* Which fantasy authors and books generate the strongest reader engagement?
 
 **Fantasy Subgenres**
 * Which fantasy subgenres are the most common?
