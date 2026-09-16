@@ -59,8 +59,7 @@ select
 	author,
 	num_pages
 from books_cleaning
-order by num_pages DESC
-limit 3;
+order by num_pages DESC;
 /* The top 3 books with the most pages are */
 
 -- Which books have the least pages
@@ -89,6 +88,15 @@ where publication_year is null;
 
 
 -- Are there duplicate titles
+select
+	title,
+	author,
+	count(*)
+from books_cleaning
+group by title, author
+having count(*) >1;
+/* There are several duplicate titles. The query pulled 357 rows. This could possibly be attributed to different editions, multiple listing on goodreads, etc. */
+
 
 -- Which columns have missing values
 
@@ -154,58 +162,65 @@ where genre ilike '%Fantasy%'; -- fantasy anywhere in the substring and in any c
 
 -- How many fantasy + romance tagged books
 select
-	count(book_id)
-from book_genres
-where genre ilike ALL 
-	(array ['%fantasy%', '%romance%']); --used and array to find the substrings
+	count(distinct bg2.book_id)
+from book_genres bg1
+inner join book_genres bg2
+	on bg1.book_id = bg2.book_id -- this join connects the two genres together
+inner join books_cleaning bc
+	on bg1.book_id = bc.book_id -- this join connects the book id + book title from the genre + cleaning tables
+where bg1.genre ilike '%fantasy%'
+and bg2.genre ilike '%romance%';
 
-select
-	book_genres.book_id,
-	title
-from book_genres
-inner join books_cleaning on book_genres.book_id = books_cleaning.book_id --joining genre and cleaning table to see the names of the titles
-where genre ilike ALL 
-	(array ['%fantasy%', '%romance%']); 
+/* There are 1760 books tagged fantasy + romance.*/
 
 -- How many fantasy + young adult tag books
 select
-	count(book_id)
-from book_genres
-where genre ilike ALL 
-	(array ['%fantasy%', '%young adult%']); --used and array to find the substrings
+	count(distinct bg2.book_id)
+from book_genres bg1
+inner join book_genres bg2
+	on bg1.book_id = bg2.book_id -- this join connects the two genres together
+inner join books_cleaning bc
+	on bg1.book_id = bc.book_id -- this join connects the book id + book title from the genre + cleaning tables
+where bg1.genre ilike '%fantasy%'
+and bg2.genre ilike '%young adult%'; 
 
-select
-	book_genres.book_id,
-	title
-from book_genres
-inner join books_cleaning on book_genres.book_id = books_cleaning.book_id --joining genre and cleaning table to see the names of the titles
-where genre ilike ALL 
-	(array ['%fantasy%', '%young adult%']); 
+/* There are 2244 books tagged fantasy + young adult */
 
 -- How many fantasy + dragons
 select
-	count(book_id)
-from book_genres
-where genre ilike ALL 
-	(array ['%fantasy%', '%dragon%']);
+	count(distinct bg2.book_id)
+from book_genres bg1
+inner join book_genres bg2
+	on bg1.book_id = bg2.book_id -- this join connects the two genres together
+inner join books_cleaning bc
+	on bg1.book_id = bc.book_id -- this join connects the book id + book title from the genre + cleaning tables
+where bg1.genre ilike '%fantasy%'
+and bg2.genre ilike '%dragon%'; 
+
+/* There are 156 books tagged fantasy + dragon.*/
 
 -- How many fantasy + vampires
 select
-	count(book_id)
-from book_genres
-where genre ilike ALL 
-	(array ['%fantasy%', '%vampire%']); --used and array to find the substrings
+	count(distinct bg2.book_id)
+from book_genres bg1
+inner join book_genres bg2
+	on bg1.book_id = bg2.book_id -- this join connects the two genres together
+inner join books_cleaning bc
+	on bg1.book_id = bc.book_id -- this join connects the book id + book title from the genre + cleaning tables
+where bg1.genre ilike '%fantasy%'
+and bg2.genre ilike '%vampire%'; 
 
-select
-	book_genres.book_id,
-	title
-from book_genres
-inner join books_cleaning on book_genres.book_id = books_cleaning.book_id --joining genre and cleaning table to see the names of the titles
-where genre ilike ALL 
-	(array ['%fantasy%', '%vampire%']); 
+/* There are 523 books tagged fantasy + vampire. */
 
 -- Publication Trends
 -- How many books where published each year
+select
+	publication_year,
+	count(*)
+from books_cleaning
+group by publication_year
+order by publication_year DESC;
+
 
 -- Which decade had the most books
 
@@ -256,12 +271,48 @@ select
 	genre
 from book_genres
 inner join books_cleaning on book_genres.book_id = books_cleaning.book_id
-where genre ilike any
+where genre ilike all
 	(array ['%fiction%', '%vampire%']);
 
-select 
-	distinct genre,
-	count(genre)
+
+select
+	count(distinct book_id)
 from book_genres
-where genre ilike '%fiction%'
-group by genre;
+where genre ilike '%Vampire%';
+
+
+select distinct
+	bg1.book_id,
+	bc.title,
+	bc.author
+from book_genres bg1
+inner join book_genres bg2
+	on bg1.book_id = bg2.book_id -- this join connects the two genres together
+inner join books_cleaning bc
+	on bg1.book_id = bc.book_id -- this join connects the book id + book title from the genre + cleaning tables
+where bg1.genre ilike '%fiction%'
+and bg2.genre ilike '%vampire%';
+
+select
+	count(distinct bg2.book_id)
+from book_genres bg1
+inner join book_genres bg2
+	on bg1.book_id = bg2.book_id -- this join connects the two genres together
+inner join books_cleaning bc
+	on bg1.book_id = bc.book_id -- this join connects the book id + book title from the genre + cleaning tables
+where bg1.genre ilike '%fiction%'
+and bg2.genre ilike '%vampire%';
+
+-- Find the broad genres under fantasy
+select distinct 
+	genre
+from book_genres
+where genre ilike '%fantasy%'
+order by genre;
+
+--Find the broad romance genres
+select distinct 
+	genre
+from book_genres
+where genre ilike '%romance%'
+order by genre;
