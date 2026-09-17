@@ -112,6 +112,11 @@ where avg_rating = '0';
 
 --Genre Exploration
 -- How many unique genre tags
+select 
+	count (distinct genre)
+from book_genres;
+
+/* There are 728 unique genre tags. */
 
 -- 20 most common genre tags
 
@@ -255,10 +260,10 @@ limit 3;
 -- Which books have the most ratings
 select
 	title,
-	author,
 	count(num_ratings)
 from books_cleaning
-order by num_ratings DESC
+group by num_ratings 
+order by num_ratings desc
 limit 3;
 
 -- Is there a relationship between rating an review count
@@ -266,9 +271,9 @@ limit 3;
 -- Which book has the highest average rating
 
 
+
+
 -- Notes
-
-
 
 
 select
@@ -322,3 +327,9 @@ select distinct
 from book_genres
 where genre ilike '%romance%'
 order by genre;
+
+
+
+select *
+from books_cleaning
+limit 5;
