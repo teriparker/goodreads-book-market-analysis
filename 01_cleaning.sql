@@ -218,7 +218,56 @@ from books_cleaning
 limit 20;
 
 
+-- Creating Ratings Distribution Table
+create table book_ratings (
+	book_id TEXT,
+	rating INTEGER,
+	rating_count INTEGER);
+
+select *
+from book_ratings; -- testing to see if the table was successfully created
 
 
+select 
+	book_id,
+	replace(rating_dis, '''', '' ) as cleaned -- removing the "" from the text
+from books_cleaning
+where rating_dis is not null
+limit 2;
+
+replace(rating_dis, '{', '')
+
+
+select 
+	book_id,
+	replace(
+		replace(
+			replace(rating_dis, '''', '' ) 
+			, '{', '')
+		, '}', '') as cleaned -- removing the { and } from the text
+from books_cleaning
+where rating_dis is not null
+limit 2;
+
+
+
+
+select
+	book_id,
+	split_part(
+		split_part (cleaned, '5: ', 2),
+	
+	', 4', 1)
+from (
+	select 
+		book_id,
+		replace(
+			replace(
+				replace(rating_dis, '''', '' ) 
+				, '{', '')
+			, '}', '') as cleaned -- removing the { and } from the text
+	from books_cleaning
+	where rating_dis is not null
+	limit 2);
 
 
